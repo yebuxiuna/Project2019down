@@ -16,4 +16,5 @@ public class UserPhone {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
     String phone;
+    String token;
 }

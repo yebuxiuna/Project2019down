@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class Msg {
 
-    String msg;
+    int msg;
 
 }
