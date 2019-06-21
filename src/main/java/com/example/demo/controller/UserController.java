@@ -10,10 +10,7 @@ import com.example.demo.result.ResultVO;
 import com.example.demo.result.ResultVOUtil;
 import com.example.demo.websocket.WebSocketServer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,9 +33,8 @@ public class UserController {
      */
     @RequestMapping(value = "/Register",method = {RequestMethod.POST})
     public ResultVO register(@RequestBody Map map){
-        ResultVO resultVO = null;
-        if(map.get("token") != null){
-            resultVO = new ResultVO();
+        if(map.get("token") != null && WebSocketServer.getWebSocketServer(map.get("token").toString()) != null){
+            ResultVO resultVO = new ResultVO();
             UserPhone user = userDao.findByPhone(map.get("phone").toString());
             if(user != null){
                 return ResultVOUtil.error("该用户已存在");
@@ -76,12 +72,12 @@ public class UserController {
         if(map.get("token") != null){
             resultVO = new ResultVO();
             UserPhone userPhone = userDao.findByPhone(map.get("phone").toString());
+            UserRegister userRegister = userinfoDao.selectUser(userPhone.getId(),map.get("pwd").toString());
             if(userPhone == null){
-                return ResultVOUtil.error("该用户不存在");
+                return ResultVOUtil.error("error:phone");
             }
-            UserRegister userRegister = userinfoDao.findById(userPhone.getId()).get();
             if(!map.get("pwd").equals(userRegister.getPwd())){
-                return ResultVOUtil.error("密码错误！");
+                return ResultVOUtil.error("error:pwd");
             }
             WebSocketServer wss = WebSocketServer.getWebSocketServer(map.get("session").toString());
             wss.setSid(userRegister.getId());
@@ -122,7 +118,7 @@ public class UserController {
         WebSocketServer wss = WebSocketServer.getWebSocketServer(map.get("token").toString());
         for (int i = 0; i < ids.size(); i++) {
             UserRegister userRegister = userinfoDao.findById(ids.get(i)).get();
-            wss.receiveApply(userRegister.getUsername(),ids.get(i));
+            wss.receiveApply(wss,userRegister.getUsername(),ids.get(i));
         }
     }
 
