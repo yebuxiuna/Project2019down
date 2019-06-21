@@ -52,8 +52,7 @@ public class UserController {
             info.setUsername(map.get("username").toString());
             info.setPwd(map.get("pwd").toString());
             info.setToken(map.get("token").toString());
-            String email = map.get("email").toString();
-            info.setEmail(email != null ? email : null);
+            info.setEmail(map.get("email") != null ? map.get("email").toString() : null);
             userinfoDao.save(info);
             return resultVO;
         }else{
@@ -63,14 +62,13 @@ public class UserController {
 
     /**
      * 用户登录
-     * @param map
+     * @param map   需要参数:token,phone,pwd
      * @return
      */
     @RequestMapping(value = "/Login",method = {RequestMethod.POST})
     public ResultVO login(@RequestBody Map map){
-        ResultVO resultVO = null;
-        if(map.get("token") != null){
-            resultVO = new ResultVO();
+        if(map.get("token") != null && WebSocketServer.getWebSocketServer(map.get("token").toString()) != null){
+            ResultVO resultVO = new ResultVO();
             UserPhone userPhone = userDao.findByPhone(map.get("phone").toString());
             UserRegister userRegister = userinfoDao.selectUser(userPhone.getId(),map.get("pwd").toString());
             if(userPhone == null){
@@ -79,7 +77,7 @@ public class UserController {
             if(!map.get("pwd").equals(userRegister.getPwd())){
                 return ResultVOUtil.error("error:pwd");
             }
-            WebSocketServer wss = WebSocketServer.getWebSocketServer(map.get("session").toString());
+            WebSocketServer wss = WebSocketServer.getWebSocketServer(map.get("token").toString());
             wss.setSid(userRegister.getId());
             //向我发送好友申请的用户id
             ArrayList<Integer> fids = new ArrayList<>();
