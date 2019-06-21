@@ -1,5 +1,6 @@
 package com.example.demo.websocket;
 
+import com.example.demo.DemoApplication;
 import com.example.demo.msg.AddFMsg;
 import com.example.demo.msg.Msg;
 import com.example.demo.msg.ReturnMsg;
@@ -35,6 +36,7 @@ public class WebSocketServer {
     }
 
     public static WebSocketServer getWebSocketServer(String id) {
+        DemoApplication.logger.info(id);
         return websocketmap.get(id);
     }
 

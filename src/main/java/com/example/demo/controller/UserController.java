@@ -9,8 +9,13 @@ import com.example.demo.entry.UserRegister;
 import com.example.demo.result.ResultVO;
 import com.example.demo.result.ResultVOUtil;
 import com.example.demo.websocket.WebSocketServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +24,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/Data")
 public class UserController {
+
+    private Logger logger = LoggerFactory.getLogger(UserController.class);
+
     @Autowired
     private UserDao userDao;
     @Autowired
@@ -41,18 +49,19 @@ public class UserController {
             }
             UserPhone tuser = new UserPhone();
             tuser.setPhone(map.get("phone").toString());
+            tuser.setToken(map.get("token").toString());
             UserPhone user2=userDao.save(tuser);
             resultVO.setMsg("S");
             WebSocketServer wss = WebSocketServer.getWebSocketServer(map.get("token").toString());
-            wss.setSid(user.getId());
+            wss.setSid(user2.getId());
             resultVO.setData(user2);
             System.out.print(user2);
             UserRegister info = new UserRegister();
             info.setId(user2.getId());
             info.setUsername(map.get("username").toString());
             info.setPwd(map.get("pwd").toString());
-            info.setToken(map.get("token").toString());
             info.setEmail(map.get("email") != null ? map.get("email").toString() : null);
+            info.setState(1);
             userinfoDao.save(info);
             return resultVO;
         }else{
@@ -181,7 +190,7 @@ public class UserController {
      * @param map
      */
     public void UpdateSate(Map map){
-        userinfoDao.setState((Integer)map.get("state"),(Integer)map.get("id"),map.get("token").toString());
+        userinfoDao.setState((Integer)map.get("state"),(Integer)map.get("id"));
     }
 
     /**

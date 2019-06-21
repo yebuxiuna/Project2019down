@@ -9,12 +9,10 @@ import javax.persistence.Id;
 @Entity
 @DynamicUpdate
 @Data
-public class UserRegister {
+public class InterestInfo {
     @Id
     int id;
-    String username;
-    String pwd;
-    String email;
-    int state;
-
+    String name;
+    String icon_name;
+    int channel_id;
 }

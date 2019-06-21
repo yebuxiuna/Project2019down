@@ -16,10 +16,9 @@ public interface UserinfoDao extends JpaRepository<UserRegister,Integer> {
 
     @Transactional
     @Modifying
-    @Query(value = "update user_register set state = ?1 ,token = ?3 where id = ?2",nativeQuery = true)
-    int setState(int state,int id,String token);
+    @Query(value = "update user_register set state = ?1 where id = ?2",nativeQuery = true)
+    int setState(int state,int id);
 
-    @Modifying
     @Query(value = "select * from user_register where id = ?1 and pwd = ?2",nativeQuery = true)
     UserRegister selectUser(int id,String pwd);
 

@@ -9,12 +9,8 @@ import javax.persistence.Id;
 @Entity
 @DynamicUpdate
 @Data
-public class UserRegister {
+public class ChannelInfo {
     @Id
-    int id;
-    String username;
-    String pwd;
-    String email;
-    int state;
-
+    int channel_id;
+    String name;
 }
