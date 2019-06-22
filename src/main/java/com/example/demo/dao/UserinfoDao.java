@@ -1,6 +1,6 @@
 package com.example.demo.dao;
 
-import com.example.demo.entry.UserRegister;
+import com.example.demo.entity.UserRegister;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

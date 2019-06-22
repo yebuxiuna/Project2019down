@@ -1,4 +1,4 @@
-package com.example.demo.entry;
+package com.example.demo.entity;
 
 import lombok.Data;
 import org.hibernate.annotations.DynamicUpdate;
@@ -9,10 +9,8 @@ import javax.persistence.Id;
 @Entity
 @DynamicUpdate
 @Data
-public class InterestInfo {
+public class ApplyInfo {
     @Id
-    int id;
-    String name;
-    String icon_name;
-    int channel_id;
+    int uid;
+    int fid;
 }
