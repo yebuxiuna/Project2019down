@@ -14,7 +14,8 @@ public class UserRegister {
     int id;
     String username;
     String pwd;
-    String email;
     int state;
+    String age;
+    String sex;
 
 }
