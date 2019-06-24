@@ -1,11 +1,16 @@
 package com.example.demo.upload;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 import sun.misc.BASE64Decoder;
 
 import java.io.*;
 
 public class BASE64DecodedMultipartFile implements MultipartFile {
+
+    private static Logger logger = LoggerFactory.getLogger(BASE64DecodedMultipartFile.class);
+
     private final byte[] imgContent;
     private final String header;
 
@@ -69,7 +74,6 @@ public class BASE64DecodedMultipartFile implements MultipartFile {
                     b[i] += 256;
                 }
             }
-
             return new BASE64DecodedMultipartFile(b, base64);
         } catch (IOException e) {
             e.printStackTrace();

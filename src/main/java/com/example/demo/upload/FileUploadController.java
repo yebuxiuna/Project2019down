@@ -26,13 +26,14 @@ public class FileUploadController {
     @RequestMapping(value = "/SetFileUpload", method = RequestMethod.POST)
     public List<ResponseResult> setFileUpload(@RequestBody Map map) {
         List<ResponseResult> list = new ArrayList<>();
-        LOGGER.info(">>>>>>>>>>>>>>>"+map.get("img"));
-        String img[] = map.get("img").toString().split(",");
+        String img[] = map.get("img").toString().split("    ");
+        LOGGER.info(">>>>>>>>>>"+img[0].length());
         for (int i = 0; i < img.length; i++) {
             MultipartFile file = null;
             ResponseResult result = new ResponseResult();
             try {
                 file = BASE64DecodedMultipartFile.base64ToMultipart(img[i]);
+                LOGGER.info(file.getName());
                 Map<String, Object> resultMap = upload(file);
                 if (!IStatusMessage.SystemStatus.SUCCESS.getMessage().equals(resultMap.get("result"))) {
                     result.setCode(IStatusMessage.SystemStatus.ERROR.getCode());

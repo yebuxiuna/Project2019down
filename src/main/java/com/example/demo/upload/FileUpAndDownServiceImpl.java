@@ -31,6 +31,7 @@ public class FileUpAndDownServiceImpl implements FileUpAndDownService {
             String path = null;
             boolean flag = false;
             for (String type : IMAGE_TYPE) {
+                logger.info(">>>>>>>>>>>>>"+type);
                 if (StringUtils.endsWithIgnoreCase(file.getOriginalFilename(), type)) {
                     flag = true;
                     break;
@@ -39,7 +40,6 @@ public class FileUpAndDownServiceImpl implements FileUpAndDownService {
             if (flag) {
                 resMap.put("result", IStatusMessage.SystemStatus.SUCCESS.getMessage());
                 String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-                logger.info("唯一标识码>>>>>>>"+uuid);
                 // 获得文件类型
                 String fileType = file.getContentType();
                 // 获得文件后缀名称
@@ -56,11 +56,15 @@ public class FileUpAndDownServiceImpl implements FileUpAndDownService {
                     // 重新生成
                     String newUUID = UUID.randomUUID().toString().replaceAll("-", "");
                     newFileName = newUUID + "." + imageName;
-                    path = config.getUpPath() + "/" + basedir + "/" + newUUID + "." + imageName;
+                    path = config.getUpPath() + "/" + basedir + "/" ;
                     // 如果目录不存在则创建目录
                     File oldFile = new File(path);
                     if (!oldFile.exists()) {
                         oldFile.mkdirs();
+                    }
+                    oldFile = new File(path , newUUID + "." + imageName);
+                    if (!oldFile.exists()) {
+                        oldFile.createNewFile();
                     }
                     //保存文件
                     //使用此方法保存必须要绝对路径且文件夹必须已存在,否则报错
@@ -70,11 +74,15 @@ public class FileUpAndDownServiceImpl implements FileUpAndDownService {
                     // 显示路径
                     resMap.put("path", "/" + basedir + "/" + newUUID + "." + imageName);
                 } else {
-                    path = config.getUpPath() + "/" + basedir + "/" + uuid + "." + imageName;
+                    path = config.getUpPath() + "/" + basedir + "/" ;
                     // 如果目录不存在则创建目录
                     File uploadFile = new File(path);
                     if (!uploadFile.exists()) {
                         uploadFile.mkdirs();
+                    }
+                    uploadFile = new File(path , uuid + "." + imageName);
+                    if (!uploadFile.exists()) {
+                        uploadFile.createNewFile();
                     }
                     file.transferTo(uploadFile);
                     // 显示路径
