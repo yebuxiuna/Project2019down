@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import com.example.demo.dao.ChannelInfoDao;
 import com.example.demo.dao.InterestInfoDao;
-import com.example.demo.entity.ChannelInfo;
 import com.example.demo.entity.InterestInfo;
 import com.example.demo.result.ResultVO;
 import org.slf4j.Logger;
@@ -26,14 +25,20 @@ public class SystemController {
     @Autowired
     private InterestInfoDao interestInfoDao;
 
+    @RequestMapping(value = "/ChannelClass",method = {RequestMethod.GET})
+    public ResultVO setChannelClass(){
+        ResultVO resultVO = new ResultVO();
+        resultVO.setMsg("S");
+        resultVO.setData(channelInfoDao.findAll());
+        return resultVO;
+    }
+
     @RequestMapping(value = "/Channel",method = {RequestMethod.GET})
     public ResultVO setChannel(){
         ResultVO resultVO = new ResultVO();
         resultVO.setMsg("S");
         List lists = new ArrayList();
-        List<ChannelInfo> channelInfos = channelInfoDao.findAll();
         List<InterestInfo> interestInfos = interestInfoDao.findAll();
-        lists.add(channelInfos);
         lists.add(interestInfos);
         List<InterestInfo> hots = new ArrayList<>();
         for (int i = 0; i < interestInfos.size(); i++) {
@@ -43,10 +48,7 @@ public class SystemController {
             int num = (int) (Math.random()*hots.size()-1);
             hots.remove(num);
         }
-        ResultVO resultVO1 = new ResultVO();
-        resultVO1.setMsg("hot");
-        resultVO1.setData(hots);
-        lists.add(resultVO1);
+        lists.add(hots);
         resultVO.setData(lists);
         return resultVO;
     }

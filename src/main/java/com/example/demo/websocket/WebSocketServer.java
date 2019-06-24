@@ -4,6 +4,7 @@ import com.example.demo.DemoApplication;
 import com.example.demo.msg.AddFMsg;
 import com.example.demo.msg.Msg;
 import com.example.demo.msg.ReturnMsg;
+import com.example.demo.msg.WaittingMsg;
 import com.example.demo.util.Flag;
 import com.example.demo.util.JsonUtil;
 import org.slf4j.Logger;
@@ -13,8 +14,10 @@ import org.springframework.stereotype.Component;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Timer;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @ServerEndpoint(value = "/websocket", encoders = {EncoderClassVo.class})
@@ -24,6 +27,7 @@ public class WebSocketServer {
     private Logger logger = LoggerFactory.getLogger(WebSocketServer.class);
     private static int onlineCount = 0;
     private static ConcurrentHashMap<String, WebSocketServer> websocketmap = new ConcurrentHashMap<>();
+    private static ArrayList<WaittingMsg> waitting = new ArrayList<>();
     private Session session;
     private int sid = 0;
 
@@ -36,8 +40,29 @@ public class WebSocketServer {
     }
 
     public static WebSocketServer getWebSocketServer(String id) {
+        //根据token获取当前机器的websocket
         DemoApplication.logger.info(id);
         return websocketmap.get(id);
+    }
+
+    public static void getMeMessage(int id){
+        //todo 获取别人在你离线时发送过来的消息
+        ArrayList<WaittingMsg> withme = new ArrayList<>();
+        for (WaittingMsg w:waitting) {
+            if(w.getFid() == id){
+                withme.add(w);
+            }
+        }
+        ReturnMsg returnMsg = new ReturnMsg();
+        for (WaittingMsg w:withme) {
+            if(w.getType().equals("text")){
+                returnMsg.setCode(Flag.SEND_MESSAGE_TEXT);
+            }else{
+                returnMsg.setCode(Flag.SEND_MESSAGE_IMG);
+            }
+
+        }
+
     }
 
     Timer timer;
@@ -50,7 +75,7 @@ public class WebSocketServer {
     @OnOpen
     public void onOpen(Session session) {
         this.session = session;
-        String token = System.currentTimeMillis() + "";
+        String token = UUID.randomUUID().toString();
         websocketmap.put(token, this);
         addOnlineCount();
         timer = new Timer();
@@ -89,11 +114,18 @@ public class WebSocketServer {
      */
     @OnMessage
     public void onMessage(String msg, Session session) {
-        logger.info("向客户端发送消息：" + msg);
-        ReturnMsg returnMsg = new ReturnMsg();
-        returnMsg.setCode(Flag.CONNECT_SUCCEED);
-        returnMsg.setMsg("收到，over");
         try {
+            Map<String,Object> map = JsonUtil.getMap(msg);
+
+            switch (map.get("type").toString()){
+                case "text":
+
+                    break;
+                case "img":
+
+                    break;
+            }
+            ReturnMsg returnMsg = new ReturnMsg();
             sendMessage(returnMsg);
         } catch (IOException e) {
             e.printStackTrace();

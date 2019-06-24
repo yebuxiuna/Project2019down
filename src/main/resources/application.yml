@@ -8,6 +8,12 @@ spring:
     show-sql: true
 server:
   port: 80
+ssl:
+  ciphers: TLS_RSA_WITH_AES_128_CBC_SHA256,
+    TLS_RSA_WITH_AES_128_CBC_SHA,
+    TLS_RSA_WITH_AES_256_CBC_SHA256,
+    TLS_RSA_WITH_AES_256_CBC_SHA,
+    SSL_RSA_WITH_3DES_EDE_CBC_SHA
 
 #jackson的配置信息
   spring:
