@@ -13,10 +13,19 @@ public class BASE64DecodedMultipartFile implements MultipartFile {
 
     private final byte[] imgContent;
     private final String header;
+    private String path = "";
 
     public BASE64DecodedMultipartFile(byte[] imgContent, String header) {
         this.imgContent = imgContent;
         this.header = header.split(";")[0];
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 
     @Override

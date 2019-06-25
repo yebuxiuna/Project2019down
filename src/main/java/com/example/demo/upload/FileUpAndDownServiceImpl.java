@@ -59,7 +59,7 @@ public class FileUpAndDownServiceImpl implements FileUpAndDownService {
                 if (!oldFile.exists()) {
                     oldFile.mkdirs();
                 }
-                oldFile = new File(path + newUUID + "." + imageName);
+                oldFile = new File(path + newFileName);
                 if (!oldFile.exists()) {
                     oldFile.createNewFile();
                 }
@@ -72,7 +72,7 @@ public class FileUpAndDownServiceImpl implements FileUpAndDownService {
                     Thumbnails.of(oldFile).scale(config.getScaleRatio()).toFile(path);
                 }
                 // 显示路径
-                resMap.put("path", "/" + basedir + "/" + newUUID + "." + imageName);
+                resMap.put("path",path + newUUID + "." + imageName);
                 resMap.put("oldFileName", oldFileName);
                 resMap.put("newFileName", newFileName);
                 resMap.put("fileSize", file.getSize());
