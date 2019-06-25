@@ -134,6 +134,7 @@ public class WebSocketServer {
     /**
      * 实现服务器主动推送
      */
+    //todo 将msg类转换为由GSON转换为json格式的字符串
     public void sendMessage(Msg msg) throws IOException {
         try {
             session.getAsyncRemote().sendText(JsonUtil.getJson(msg));
