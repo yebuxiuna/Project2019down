@@ -50,43 +50,29 @@ public class FileUpAndDownServiceImpl implements FileUpAndDownService {
                 // 年月日文件夹
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
                 String basedir = sdf.format(new Date());
+                // 重新生成
+                String newUUID = UUID.randomUUID().toString().replaceAll("-", "");
+                newFileName = newUUID + "." + imageName;
+                path = config.getUpPath() + "/projectImg" + "/" + basedir + "/";
+                // 如果目录不存在则创建目录
+                File oldFile = new File(path);
+                if (!oldFile.exists()) {
+                    oldFile.mkdirs();
+                }
+                oldFile = new File(path + newUUID + "." + imageName);
+                if (!oldFile.exists()) {
+                    oldFile.createNewFile();
+                }
+                //保存文件
+                //使用此方法保存必须要绝对路径且文件夹必须已存在,否则报错
+                file.transferTo(oldFile);
                 // 进行压缩(大于4M)
                 if (file.getSize() > config.getFileSize()) {
-                    // 重新生成
-                    String newUUID = UUID.randomUUID().toString().replaceAll("-", "");
-                    newFileName = newUUID + "." + imageName;
-                    path = config.getUpPath() + "/" + basedir + "/" ;
-                    // 如果目录不存在则创建目录
-                    File oldFile = new File(path);
-                    if (!oldFile.exists()) {
-                        oldFile.mkdirs();
-                    }
-                    oldFile = new File(path + newUUID + "." + imageName );
-                    if (!oldFile.exists()) {
-                        oldFile.createNewFile();
-                    }
-                    //保存文件
-                    //使用此方法保存必须要绝对路径且文件夹必须已存在,否则报错
-                    file.transferTo(oldFile);
                     // 压缩图片
                     Thumbnails.of(oldFile).scale(config.getScaleRatio()).toFile(path);
-                    // 显示路径
-                    resMap.put("path", "/" + basedir + "/" + newUUID + "." + imageName);
-                } else {
-                    path = config.getUpPath() + "/" + basedir + "/" ;
-//                     如果目录不存在则创建目录
-                    File uploadFile = new File(path);
-                    if (!uploadFile.exists()) {
-                        uploadFile.mkdirs();
-                    }
-                    uploadFile = new File(path + uuid + "." + imageName );
-                    if (!uploadFile.exists()) {
-                        uploadFile.createNewFile();
-                    }
-                    file.transferTo(uploadFile);
-                    // 显示路径
-                    resMap.put("path", "/" + basedir + "/" + uuid + "." + imageName);
                 }
+                // 显示路径
+                resMap.put("path", "/" + basedir + "/" + newUUID + "." + imageName);
                 resMap.put("oldFileName", oldFileName);
                 resMap.put("newFileName", newFileName);
                 resMap.put("fileSize", file.getSize());

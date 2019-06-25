@@ -18,15 +18,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/Data")
 public class UserController {
-
-    private static Map<Integer, String> users = new HashMap<>();
 
     private Logger logger = LoggerFactory.getLogger(UserController.class);
 
@@ -56,10 +53,7 @@ public class UserController {
             tuser.setToken(map.get("token").toString());
             UserPhone user2 = userDao.save(tuser);
             resultVO.setMsg("S");
-            WebSocketServer wss = WebSocketServer.getWebSocketServer(map.get("token").toString());
-            wss.setSid(user2.getId());
             resultVO.setData(user2);
-            System.out.print(user2);
             UserRegister info = new UserRegister();
             info.setId(user2.getId());
             info.setUsername(map.get("username").toString());

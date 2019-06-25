@@ -1,5 +1,8 @@
 package com.example.demo.upload;
 
+import com.example.demo.msg.ReturnMsg;
+import com.example.demo.util.Flag;
+import com.example.demo.websocket.WebSocketServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -24,33 +25,29 @@ public class FileUploadController {
     private FileUpAndDownService fileUpAndDownService;
 
     @RequestMapping(value = "/SetFileUpload", method = RequestMethod.POST)
-    public List<ResponseResult> setFileUpload(@RequestBody Map map) {
-        List<ResponseResult> list = new ArrayList<>();
-        String img[] = map.get("img").toString().split("    ");
-        for (int i = 0; i < img.length; i++) {
+    public ReturnMsg setFileUpload(@RequestBody Map map) {
+        ReturnMsg result = null;
+        if(map.get("token") != null || WebSocketServer.getWebSocketServer(map.get("token").toString()) != null){
             MultipartFile file = null;
-            ResponseResult result = new ResponseResult();
+            String img = map.get("img").toString();
+            result = new ReturnMsg();
             try {
-                file = BASE64DecodedMultipartFile.base64ToMultipart(img[i]);
-                LOGGER.info(file.getName());
+                file = BASE64DecodedMultipartFile.base64ToMultipart(img);
                 Map<String, Object> resultMap = upload(file);
                 if (!IStatusMessage.SystemStatus.SUCCESS.getMessage().equals(resultMap.get("result"))) {
-                    result.setCode(IStatusMessage.SystemStatus.ERROR.getCode());
-                    result.setMessage((String) resultMap.get("msg"));
-                    list.add(result);
+                    result.setCode(Flag.SEND_IMG_SUCCEED);
                 }
-                result.setData(resultMap);
+                result.setMsg(resultMap);
             } catch (ServiceException e) {
                 e.printStackTrace();
                 LOGGER.error(">>>>>>图片上传异常，e={}", e.getMessage());
-                result.setCode(IStatusMessage.SystemStatus.ERROR.getCode());
-                result.setMessage(IStatusMessage.SystemStatus.ERROR.getMessage());
+                result.setCode(Flag.SEND_IMG_ERROR);
+                result.setMsg(IStatusMessage.SystemStatus.ERROR.getMessage());
             }
-            LOGGER.info(">>>>>>>>>>>"+result.getMessage());
-            list.add(result);
         }
-        return list;
+        return result;
     }
+
 
     private Map<String, Object> upload(MultipartFile file) throws ServiceException {
         Map<String, Object> returnMap = new HashMap<>();

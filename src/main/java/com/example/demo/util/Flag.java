@@ -7,4 +7,6 @@ public class Flag {
     public static final int AGREEMENT_FRIEND = 3;
     public static final int SEND_MESSAGE_TEXT = 4;
     public static final int SEND_MESSAGE_IMG = 5;
+    public static final int SEND_IMG_SUCCEED = 6;
+    public static final int SEND_IMG_ERROR = 7;
 }

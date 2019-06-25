@@ -16,7 +16,6 @@ import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Timer;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -39,10 +38,10 @@ public class WebSocketServer {
         this.sid = sid;
     }
 
-    public static WebSocketServer getWebSocketServer(String id) {
+    public static WebSocketServer getWebSocketServer(String token) {
         //根据token获取当前机器的websocket
-        DemoApplication.logger.info(id);
-        return websocketmap.get(id);
+        DemoApplication.logger.info(token);
+        return websocketmap.get(token);
     }
 
     public static void getMeMessage(int id){
@@ -53,19 +52,9 @@ public class WebSocketServer {
                 withme.add(w);
             }
         }
-        ReturnMsg returnMsg = new ReturnMsg();
-        for (WaittingMsg w:withme) {
-            if(w.getType().equals("text")){
-                returnMsg.setCode(Flag.SEND_MESSAGE_TEXT);
-            }else{
-                returnMsg.setCode(Flag.SEND_MESSAGE_IMG);
-            }
 
-        }
 
     }
-
-    Timer timer;
 
     /**
      * 建立连接时
@@ -78,7 +67,6 @@ public class WebSocketServer {
         String token = UUID.randomUUID().toString();
         websocketmap.put(token, this);
         addOnlineCount();
-        timer = new Timer();
         logger.info("有用户连接~~~~当前在线人数：" + onlineCount);
         ReturnMsg msg = new ReturnMsg();
         msg.setCode(1);
@@ -102,7 +90,6 @@ public class WebSocketServer {
             }
         }
         cutOnlineCount();
-        timer.cancel();
         logger.info("有用户退出~~~~当前在线人数：" + onlineCount);
     }
 
@@ -141,7 +128,6 @@ public class WebSocketServer {
     @OnError
     public void onError(Session session, Throwable error) {
         logger.error("出现错误");
-        timer.cancel();
         error.printStackTrace();
     }
 
