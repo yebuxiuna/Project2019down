@@ -27,7 +27,6 @@ public class FileUploadController {
     public List<ResponseResult> setFileUpload(@RequestBody Map map) {
         List<ResponseResult> list = new ArrayList<>();
         String img[] = map.get("img").toString().split("    ");
-        LOGGER.info(">>>>>>>>>>"+img[0].length());
         for (int i = 0; i < img.length; i++) {
             MultipartFile file = null;
             ResponseResult result = new ResponseResult();

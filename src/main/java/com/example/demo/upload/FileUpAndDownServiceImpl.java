@@ -31,7 +31,6 @@ public class FileUpAndDownServiceImpl implements FileUpAndDownService {
             String path = null;
             boolean flag = false;
             for (String type : IMAGE_TYPE) {
-                logger.info(">>>>>>>>>>>>>"+type);
                 if (StringUtils.endsWithIgnoreCase(file.getOriginalFilename(), type)) {
                     flag = true;
                     break;
@@ -62,7 +61,7 @@ public class FileUpAndDownServiceImpl implements FileUpAndDownService {
                     if (!oldFile.exists()) {
                         oldFile.mkdirs();
                     }
-                    oldFile = new File(path , newUUID + "." + imageName);
+                    oldFile = new File(path + newUUID + "." + imageName );
                     if (!oldFile.exists()) {
                         oldFile.createNewFile();
                     }
@@ -75,12 +74,12 @@ public class FileUpAndDownServiceImpl implements FileUpAndDownService {
                     resMap.put("path", "/" + basedir + "/" + newUUID + "." + imageName);
                 } else {
                     path = config.getUpPath() + "/" + basedir + "/" ;
-                    // 如果目录不存在则创建目录
+//                     如果目录不存在则创建目录
                     File uploadFile = new File(path);
                     if (!uploadFile.exists()) {
                         uploadFile.mkdirs();
                     }
-                    uploadFile = new File(path , uuid + "." + imageName);
+                    uploadFile = new File(path + uuid + "." + imageName );
                     if (!uploadFile.exists()) {
                         uploadFile.createNewFile();
                     }
