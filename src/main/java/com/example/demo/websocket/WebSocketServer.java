@@ -1,10 +1,6 @@
 package com.example.demo.websocket;
 
-import com.example.demo.DemoApplication;
-import com.example.demo.msg.AddFMsg;
-import com.example.demo.msg.Msg;
-import com.example.demo.msg.ReturnMsg;
-import com.example.demo.msg.WaittingMsg;
+import com.example.demo.msg.*;
 import com.example.demo.util.Flag;
 import com.example.demo.util.JsonUtil;
 import org.slf4j.Logger;
@@ -26,7 +22,7 @@ public class WebSocketServer {
     private Logger logger = LoggerFactory.getLogger(WebSocketServer.class);
     private static int onlineCount = 0;
     private static ConcurrentHashMap<String, WebSocketServer> websocketmap = new ConcurrentHashMap<>();
-    private static ArrayList<WaittingMsg> waitting = new ArrayList<>();
+    private static ArrayList<SendInfoMsg> waitting = new ArrayList<>();
     private Session session;
     private int sid = 0;
 
@@ -39,20 +35,19 @@ public class WebSocketServer {
     }
 
     public static WebSocketServer getWebSocketServer(String token) {
-        //根据token获取当前机器的websocket
-        DemoApplication.logger.info(token);
         return websocketmap.get(token);
     }
 
-    public static void getMeMessage(int id){
-        //todo 获取别人在你离线时发送过来的消息
-        ArrayList<WaittingMsg> withme = new ArrayList<>();
-        for (WaittingMsg w:waitting) {
-            if(w.getFid() == id){
-                withme.add(w);
+    public static void getMeMessage(WebSocketServer webSocketServer,int id){
+        try {
+            for (SendInfoMsg s:waitting) {
+                if(s.getUid() == id){
+                    webSocketServer.sendMessage(s);
+                }
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
 
     }
 
@@ -70,7 +65,8 @@ public class WebSocketServer {
         logger.info("有用户连接~~~~当前在线人数：" + onlineCount);
         ReturnMsg msg = new ReturnMsg();
         msg.setCode(1);
-        msg.setMsg(token);
+        msg.setMsg("token");
+        msg.setAction(token);
         try {
             sendMessage(msg);
         } catch (IOException e) {
@@ -96,24 +92,29 @@ public class WebSocketServer {
     /**
      * 客户端发送消息时
      *
-     * @param msg
+     * @param json
      * @param session
      */
     @OnMessage
-    public void onMessage(String msg, Session session) {
+    public void onMessage(String json, Session session) {
         try {
-            Map<String,Object> map = JsonUtil.getMap(msg);
-
-            switch (map.get("type").toString()){
-                case "text":
-
-                    break;
-                case "img":
-
-                    break;
+            SendInfoMsg msg = (SendInfoMsg) JsonUtil.getObject(json, SendInfoMsg.class);
+            if(msg.getMsg().equals("send")){
+                WebSocketServer webSocketServer = websocketmap.get(msg.getFid());
+                SendInfoMsg msg2 = new SendInfoMsg();
+                msg2.setContent(msg.getContent());
+                //发送出去是 UID变为FID  FID变为UID
+                msg2.setUid(msg.getFid());
+                msg2.setFid(msg.getUid());
+                msg2.setTime(msg.getTime());
+                msg2.setMsg("to");
+                if(webSocketServer != null){
+                    webSocketServer.sendMessage(msg2);
+                }else{
+                    //接收方不在线则放入等待消息中
+                    waitting.add(msg2);
+                }
             }
-            ReturnMsg returnMsg = new ReturnMsg();
-            sendMessage(returnMsg);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -7,5 +7,6 @@ import lombok.Data;
  */
 @Data
 public class ReturnMsg extends Msg {
-    Object msg;
+    String msg;
+    String action;
 }

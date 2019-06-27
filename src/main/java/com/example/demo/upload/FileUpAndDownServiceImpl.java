@@ -50,9 +50,6 @@ public class FileUpAndDownServiceImpl implements FileUpAndDownService {
                 // 年月日文件夹
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
                 String basedir = sdf.format(new Date());
-                // 重新生成
-                String newUUID = UUID.randomUUID().toString().replaceAll("-", "");
-                newFileName = newUUID + "." + imageName;
                 path = config.getUpPath() + "/projectImg" + "/" + basedir + "/";
                 // 如果目录不存在则创建目录
                 File oldFile = new File(path);
@@ -72,12 +69,12 @@ public class FileUpAndDownServiceImpl implements FileUpAndDownService {
                     Thumbnails.of(oldFile).scale(config.getScaleRatio()).toFile(path);
                 }
                 // 显示路径
-                resMap.put("path",path + newUUID + "." + imageName);
+                resMap.put("path","projectImg" + "/" + basedir + "/" + uuid + "." + imageName);
                 resMap.put("oldFileName", oldFileName);
                 resMap.put("newFileName", newFileName);
                 resMap.put("fileSize", file.getSize());
             } else {
-                resMap.put("result", "图片格式不正确,支持png|jpg|jpeg");
+                resMap.put("result", "F");
             }
             return resMap;
         } catch (Exception e) {

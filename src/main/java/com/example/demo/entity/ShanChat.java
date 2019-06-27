@@ -9,8 +9,10 @@ import javax.persistence.Id;
 @Entity
 @DynamicUpdate
 @Data
-public class InvitationImage {
-    int id;
+public class ShanChat {
     @Id
-    String imagePath;
+    int id;
+    int uid;
+    String username;
+    String asme;
 }
